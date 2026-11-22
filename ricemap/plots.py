@@ -156,8 +156,10 @@ def clear_observations(clear_total, clear_by_month, s2meta, s1meta, extent, path
     for k, (vals, col, lab) in enumerate(bars):
         off = (k - 1) * (w + 0.02)
         ax2.bar(xs + off, vals, w, color=col, label=lab)
-        for j in range(len(xs)):
-            ax2.text(xs[j] + off, vals[j] + 0.1, f"{vals[j]:g}", ha="center", va="bottom", fontsize=8.5, color=INK)
+        if k == 2:  # label only the clear views, the point of the chart
+            for j in range(len(xs)):
+                ax2.text(xs[j] + off, vals[j] + 0.1, f"{vals[j]:g}", ha="center", va="bottom", fontsize=9,
+                         weight="bold", color=INK)
     ax2.set_xticks(xs, labels)
     ax2.set_ylim(0, max(s1.max(), s2n.max()) + 2.5)
     ax2.set_ylabel("observations per month")
@@ -187,7 +189,8 @@ def model_comparison(cv, inseason, cloud_gap, path):
             ax.plot([lo - 0.5 * span, v], [i + off] * 2, color=GRID, linewidth=1, zorder=1)
             ax.plot(v, i + off, marker=mk, color=col, markersize=7, linestyle="none", zorder=3,
                     label=name if i == 0 else None)
-            ax.text(v + 0.03 * span, i + off, f"{v:.3f}", va="center", fontsize=8, color=INK)
+            if s == "test":  # label only the headline score; the rest are read from the axis
+                ax.text(v + 0.03 * span, i + off, f"{v:.3f}", va="center", fontsize=9, weight="bold", color=INK)
     labels = []
     for k in keys:
         fs, m, _ = k.split("|")
@@ -318,9 +321,9 @@ def map_comparison(maps, ref, colors, extent, test_mask, path, subtitle=""):
 
 def hero_figure(map_s1, ref, colors, extent, curves, ba, path, place, year):
     """16:9 card: radar-only map, CDL, and the VH curves that make it possible."""
-    fig = plt.figure(figsize=(16, 9), dpi=100)
-    gs = fig.add_gridspec(2, 3, width_ratios=[1, 1, 1.1], height_ratios=[0.17, 1], left=0.025, right=0.95,
-                          top=0.97, bottom=0.1, wspace=0.2, hspace=0.12)
+    fig = plt.figure(figsize=(16, 7), dpi=100)
+    gs = fig.add_gridspec(2, 3, width_ratios=[1, 1, 1.1], height_ratios=[0.2, 1], left=0.025, right=0.95,
+                          top=0.96, bottom=0.11, wspace=0.2, hspace=0.22)
     head = fig.add_subplot(gs[0, :])
     head.axis("off")
     head.text(0, 0.75, "Rice and corn from Sentinel-1 radar", fontsize=24, weight="bold", color=INK, va="center")
